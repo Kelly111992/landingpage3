@@ -1295,6 +1295,13 @@ em { font-style: italic; font-family: var(--f-serif); font-weight: 400; }
   transform: translate(-50%, 8px);
 }
 
+/* Swap "Hover" / "Toca" based on whether the device supports hover. */
+.flavor__hint-action--tap { display: none; }
+@media (hover: none) {
+  .flavor__hint-action--hover { display: none; }
+  .flavor__hint-action--tap { display: inline; }
+}
+
 @media (max-width: 900px) {
   .flavor { grid-template-columns: 1fr; }
   .flavors__stage { min-height: 1100px; }
