@@ -38,41 +38,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="./css/style.css?v=11" />
+<link rel="stylesheet" href="./css/style.css?v=12" />
 </head>
 <body>
-
-<!-- SVG chroma-key filter: removes near-white studio backdrop from product videos.
-     Strategy: compute luminance into a separate alpha channel, then apply a
-     non-linear curve so only luminance > 0.92 fades out. The bottle's water
-     and label keep their colour while the studio backdrop becomes transparent. -->
-<svg class="svg-defs" aria-hidden="true" focusable="false" width="0" height="0">
-  <defs>
-    <filter id="killWhite" color-interpolation-filters="sRGB">
-      <!-- 1) Bump contrast slightly so the studio cyclorama goes whiter and
-              the bottle (especially its rim/highlights) gets a tiny darkening. -->
-      <feComponentTransfer in="SourceGraphic" result="boosted">
-        <feFuncR type="linear" slope="1.10" intercept="-0.05"/>
-        <feFuncG type="linear" slope="1.10" intercept="-0.05"/>
-        <feFuncB type="linear" slope="1.10" intercept="-0.05"/>
-      </feComponentTransfer>
-      <!-- 2) Build an alpha mask from per-pixel luminance.
-              Rows 1–3 are identity; row 4 puts luminance into alpha. -->
-      <feColorMatrix in="boosted" type="matrix" values="
-        1 0 0 0 0
-        0 1 0 0 0
-        0 0 1 0 0
-        0.299 0.587 0.114 0 0" result="lumAlpha"/>
-      <!-- 3) Steep threshold curve: keep alpha=1 up to ~0.9 luminance,
-              ramp down to 0 from 0.92 → 1.0 (only studio white falls off). -->
-      <feComponentTransfer in="lumAlpha" result="thresh">
-        <feFuncA type="table" tableValues="1 1 1 1 1 1 1 1 1 0.4 0"/>
-      </feComponentTransfer>
-      <!-- 4) Composite the original colour using the thresholded alpha. -->
-      <feComposite in="SourceGraphic" in2="thresh" operator="in"/>
-    </filter>
-  </defs>
-</svg>
 
 <!-- Grain overlay (fixed, pointer-events-none) -->
 <div class="grain" aria-hidden="true"></div>
@@ -443,7 +411,7 @@
           <div class="flavor__ring flavor__ring--blue" aria-hidden="true"></div>
           <img class="flavor__bottle" src="./assets/img/bottle-blueberry.png" alt="H2PRO Blueberry" />
           <video class="flavor__video" data-video="blueberry" muted playsinline loop preload="metadata" aria-hidden="true">
-            <source src="./assets/video/blueberry-360.mp4" type="video/mp4" />
+            <source src="./assets/video/blueberry-360.clean.mp4" type="video/mp4" />
           </video>
           <span class="flavor__hint" aria-hidden="true">
             <span class="flavor__hint-action flavor__hint-action--hover">Hover</span>
@@ -476,7 +444,7 @@
           <div class="flavor__ring flavor__ring--lemon" aria-hidden="true"></div>
           <img class="flavor__bottle" src="./assets/img/bottle-limonada.png" alt="H2PRO Limonada" />
           <video class="flavor__video" data-video="limonada" muted playsinline loop preload="metadata" aria-hidden="true">
-            <source src="./assets/video/limonada-360.mp4" type="video/mp4" />
+            <source src="./assets/video/limonada-360.clean.mp4" type="video/mp4" />
           </video>
           <span class="flavor__hint" aria-hidden="true">
             <span class="flavor__hint-action flavor__hint-action--hover">Hover</span>

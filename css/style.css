@@ -1251,7 +1251,7 @@ em { font-style: italic; font-family: var(--f-serif); font-weight: 400; }
   pointer-events: none;
   opacity: 0;
   transition: opacity var(--t-mid) var(--e-spring);
-  filter: url(#killWhite) drop-shadow(0 50px 70px rgba(10,15,20,0.22));
+  filter: drop-shadow(0 50px 70px rgba(10,15,20,0.22));
 }
 .flavor__visual.is-playing .flavor__video { opacity: 1; }
 .flavor__visual.is-playing .flavor__bottle { opacity: 0; }
