@@ -248,9 +248,9 @@
     });
   }
 
-  // Auto-play the 360° rotation on the active flavor for ~5s. Used so users
-  // (especially on touch devices) discover the rotation without needing the
-  // hover hint. Triggered on tab clicks and on first view of the section.
+  // Show the 360° rotation on the active flavor for ~5s. The rotation is
+  // an animated WebP that loops on its own, so we just toggle the
+  // .is-playing class on the visual to fade it in / out.
   let autoplayTimer = null;
   function autoplayActiveFlavor() {
     if (reduceMotion) return;
@@ -258,13 +258,10 @@
     const active = Array.from(flavorPanels).find(p => p.classList.contains('is-active'));
     if (!active) return;
     const visual = active.querySelector('.flavor__visual');
-    const video = visual && visual.querySelector('.flavor__video');
-    if (!visual || !video) return;
+    if (!visual) return;
     visual.classList.add('is-playing');
-    video.play().catch(() => {});
     autoplayTimer = setTimeout(() => {
       visual.classList.remove('is-playing');
-      video.pause();
       autoplayTimer = null;
     }, 5000);
   }
@@ -292,16 +289,13 @@
   flavorPanels.forEach(panel => {
     const visual = panel.querySelector('.flavor__visual');
     if (!visual) return;
-    const video = visual.querySelector('.flavor__video');
     const start = () => {
       clearTimeout(autoplayTimer);
       visual.classList.add('is-playing');
-      if (video) video.play().catch(() => {});
     };
     const stop = () => {
       clearTimeout(autoplayTimer);
       visual.classList.remove('is-playing');
-      if (video) video.pause();
     };
     if (!isTouch) {
       visual.addEventListener('pointerenter', start);
