@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#F4F6F8" />
+<title>H2PRO — Clear Protein. Agua con proteína.</title>
+<meta name="description" content="El primer protein water hecho en México. 20g de proteína aislada de suero, 0 azúcar, 0 lactosa, lista para tomar. Disponible en sabor blueberry y limonada." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="./css/style.css?v=10" />
+<link rel="icon" type="image/svg+xml" href="./assets/logo/h2pro-logo.svg" />
+</head>
+<body>
+
+<!-- SVG chroma-key filter: removes near-white studio backdrop from product videos.
+     Strategy: compute luminance into a separate alpha channel, then apply a
+     non-linear curve so only luminance > 0.92 fades out. The bottle's water
+     and label keep their colour while the studio backdrop becomes transparent. -->
+<svg class="svg-defs" aria-hidden="true" focusable="false" width="0" height="0">
+  <defs>
+    <filter id="killWhite" color-interpolation-filters="sRGB">
+      <!-- 1) Bump contrast slightly so the studio cyclorama goes whiter and
+              the bottle (especially its rim/highlights) gets a tiny darkening. -->
+      <feComponentTransfer in="SourceGraphic" result="boosted">
+        <feFuncR type="linear" slope="1.10" intercept="-0.05"/>
+        <feFuncG type="linear" slope="1.10" intercept="-0.05"/>
+        <feFuncB type="linear" slope="1.10" intercept="-0.05"/>
+      </feComponentTransfer>
+      <!-- 2) Build an alpha mask from per-pixel luminance.
+              Rows 1–3 are identity; row 4 puts luminance into alpha. -->
+      <feColorMatrix in="boosted" type="matrix" values="
+        1 0 0 0 0
+        0 1 0 0 0
+        0 0 1 0 0
+        0.299 0.587 0.114 0 0" result="lumAlpha"/>
+      <!-- 3) Steep threshold curve: keep alpha=1 up to ~0.9 luminance,
+              ramp down to 0 from 0.92 → 1.0 (only studio white falls off). -->
+      <feComponentTransfer in="lumAlpha" result="thresh">
+        <feFuncA type="table" tableValues="1 1 1 1 1 1 1 1 1 0.4 0"/>
+      </feComponentTransfer>
+      <!-- 4) Composite the original colour using the thresholded alpha. -->
+      <feComposite in="SourceGraphic" in2="thresh" operator="in"/>
+    </filter>
+  </defs>
+</svg>
+
+<!-- Grain overlay (fixed, pointer-events-none) -->
+<div class="grain" aria-hidden="true"></div>
+
+<!-- Custom cursor -->
+<div class="cursor" aria-hidden="true"><span></span></div>
+
+<!-- ============== NAV ============== -->
+<header class="nav-shell" id="nav">
+  <nav class="nav">
+    <a class="nav__logo" href="#top" aria-label="H2PRO">
+      <img src="./assets/logo/h2pro-logo.svg" alt="H2PRO" />
+    </a>
+    <ul class="nav__links">
+      <li><a href="#manifiesto">Manifiesto</a></li>
+      <li><a href="#beneficios">Beneficios</a></li>
+      <li><a href="#sabores">Sabores</a></li>
+      <li><a href="#nutricion">Nutrición</a></li>
+    </ul>
+    <a class="btn btn--pill" href="#contacto">
+      <span>Pide muestra</span>
+      <span class="btn__icon" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+      </span>
+    </a>
+    <button class="nav__burger" aria-label="Menú" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </nav>
+</header>
+
+<!-- Mobile menu overlay -->
+<div class="mobile-menu" aria-hidden="true">
+  <div class="mobile-menu__inner">
+    <ul>
+      <li style="--i:0"><a href="#manifiesto">Manifiesto</a></li>
+      <li style="--i:1"><a href="#beneficios">Beneficios</a></li>
+      <li style="--i:2"><a href="#sabores">Sabores</a></li>
+      <li style="--i:3"><a href="#nutricion">Nutrición</a></li>
+      <li style="--i:4"><a href="#contacto">Contacto</a></li>
+    </ul>
+    <div class="mobile-menu__foot">
+      <a href="mailto:diego@h2pro.fit">diego@h2pro.fit</a>
+      <a href="https://instagram.com/h2pro.fit" target="_blank" rel="noopener">@h2pro.fit ↗</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============== HERO ============== -->
+<section class="hero" id="top">
+  <!-- Background atmospheric layer -->
+  <div class="hero__bg" aria-hidden="true">
+    <div class="orb orb--1"></div>
+    <div class="orb orb--2"></div>
+    <div class="orb orb--3"></div>
+  </div>
+
+  <div class="hero__inner">
+    <div class="hero__copy">
+      <span class="eyebrow" data-reveal>
+        <span class="eyebrow__dot"></span>
+        H2PRO® · Clear Protein · México
+      </span>
+
+      <h1 class="display" aria-label="Agua con proteína">
+        <span class="display__line" data-reveal-line><span>AGUA</span></span>
+        <span class="display__line display__line--italic" data-reveal-line><span>con</span></span>
+        <span class="display__line" data-reveal-line><span>PROTEÍNA<i class="dot">.</i></span></span>
+      </h1>
+
+      <p class="hero__sub" data-reveal>
+        20g de proteína aislada de suero. <strong>0 azúcar, 0 lactosa, sin espesantes.</strong>
+        El primer <em>protein water</em> hecho en México.
+      </p>
+
+      <div class="hero__ctas" data-reveal>
+        <a class="btn btn--solid" href="#beneficios">
+          <span>Conoce H2PRO</span>
+          <span class="btn__icon" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+          </span>
+        </a>
+        <a class="btn btn--ghost" href="#sabores">
+          <span>Ver sabores</span>
+        </a>
+      </div>
+
+      <div class="hero__meta" data-reveal>
+        <div class="hero__meta-item"><b>500</b><span>ml</span></div>
+        <div class="hero__meta-item"><b>20<sup>g</sup></b><span>proteína</span></div>
+        <div class="hero__meta-item"><b>80</b><span>kcal</span></div>
+        <div class="hero__meta-item"><b>0</b><span>azúcar</span></div>
+      </div>
+    </div>
+
+    <!-- Bottle stage (right side) -->
+    <div class="hero__stage" data-tilt>
+      <div class="stage__halo"></div>
+
+      <!-- floating spec chips: 2 only, the two non-negotiable proof points -->
+      <div class="chip chip--1" data-float="0">
+        <span class="chip__num">20<sup>g</sup></span>
+        <span class="chip__lbl">Whey isolate</span>
+      </div>
+      <div class="chip chip--2" data-float="1">
+        <span class="chip__num">0</span>
+        <span class="chip__lbl">azúcar añadida</span>
+      </div>
+
+      <picture class="stage__bottle">
+        <img src="./assets/img/bottle-blueberry.png" alt="Botella H2PRO sabor Blueberry" />
+      </picture>
+
+      <div class="stage__shadow" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <!-- Scroll cue -->
+  <a class="scroll-cue" href="#manifiesto" aria-label="Continuar">
+    <span class="scroll-cue__line"></span>
+    <span class="scroll-cue__txt">scroll</span>
+  </a>
+
+  <!-- Marquee bottom -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      <span>20G PROTEÍNA</span><span>·</span>
+      <span>0 AZÚCAR</span><span>·</span>
+      <span>0 LACTOSA</span><span>·</span>
+      <span>0 ESPESANTES</span><span>·</span>
+      <span>80 KCAL</span><span>·</span>
+      <span>500 ML</span><span>·</span>
+      <span>LISTA PARA TOMAR</span><span>·</span>
+      <span>HECHO EN MÉXICO</span><span>·</span>
+      <span>20G PROTEÍNA</span><span>·</span>
+      <span>0 AZÚCAR</span><span>·</span>
+      <span>0 LACTOSA</span><span>·</span>
+      <span>0 ESPESANTES</span><span>·</span>
+      <span>80 KCAL</span><span>·</span>
+      <span>500 ML</span><span>·</span>
+      <span>LISTA PARA TOMAR</span><span>·</span>
+      <span>HECHO EN MÉXICO</span><span>·</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============== MANIFIESTO ============== -->
+<section class="manifesto" id="manifiesto">
+  <div class="container">
+    <span class="eyebrow eyebrow--dark" data-reveal>
+      <span class="eyebrow__dot"></span>
+      01 — Manifiesto
+    </span>
+
+    <div class="manifesto__hero">
+      <h2 class="quote" data-split-text>
+        Esto no es un shake. <span class="quote__ital">Es proteína que aprendió a fluir.</span>
+      </h2>
+      <figure class="manifesto__visual" data-reveal>
+        <img src="./assets/img/lifestyle/bottle-moody.png" alt="H2PRO sobre superficie oscura con luz cinematográfica lateral" loading="lazy" />
+        <figcaption>
+          <span>·001</span>
+          <b>Clear protein</b>
+          <i>500 ml · 20 g whey isolate</i>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="manifesto__grid">
+      <div class="manifesto__col" data-reveal>
+        <p>
+          Durante 20 años hicimos suplementos. Polvos, cápsulas, batidos espesos.
+          Hasta que entendimos algo: la gente que cuida su cuerpo no quiere preparar
+          fórmulas — quiere tomar algo bueno y seguir con su día.
+        </p>
+        <p>
+          H2PRO nació de esa idea simple: <em>agua con proteína</em>.
+          Sin trucos, sin azúcares disfrazados, sin texturas raras.
+          Una bebida clara, con la proteína de un suplemento premium y la
+          practicidad de un agua mineral.
+        </p>
+      </div>
+      <div class="manifesto__col manifesto__col--values" data-reveal>
+        <ul class="values">
+          <li><span>·01</span><b>Clean label</b><i>Etiquetas que cualquiera puede leer.</i></li>
+          <li><span>·02</span><b>Funcional</b><i>20g de proteína por porción, biodisponible.</i></li>
+          <li><span>·03</span><b>Diaria</b><i>Para la oficina, el gym o cualquier momento.</i></li>
+          <li><span>·04</span><b>Mexicana</b><i>Formulada y producida en México.</i></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FLOW VIDEO (cinematic break) ============== -->
+<section class="flow-video" aria-label="H2PRO en movimiento">
+  <video class="flow-video__media"
+         poster="./assets/video/h2pro-flow-poster.jpg"
+         autoplay muted loop playsinline
+         preload="metadata"
+         aria-hidden="true">
+    <source src="./assets/video/h2pro-flow.webm" type="video/webm" />
+    <source src="./assets/video/h2pro-flow.mp4" type="video/mp4" />
+  </video>
+  <div class="flow-video__caption">
+    <span class="flow-video__chap">·VOL 02</span>
+    <p>Proteína que aprendió a <em>fluir</em>.</p>
+  </div>
+</section>
+
+<!-- ============== BENTO ============== -->
+<section class="bento" id="beneficios">
+  <div class="container">
+    <header class="section-head">
+      <span class="eyebrow eyebrow--dark" data-reveal>
+        <span class="eyebrow__dot"></span>
+        02 — Por qué H2PRO
+      </span>
+      <h2 class="section-title" data-split-text>
+        Una bebida ligera con la <span class="section-title__ital">disciplina</span>
+        de un suplemento.
+      </h2>
+    </header>
+
+    <div class="bento__grid">
+      <!-- HERO CARD: 20g -->
+      <article class="card card--hero" data-bento="hero">
+        <div class="card__shell">
+          <div class="card__core">
+            <span class="card__tag">Proteína aislada de suero</span>
+            <div class="card__big">
+              <span class="card__num">20</span>
+              <span class="card__unit">g</span>
+            </div>
+            <p class="card__text">
+              Proteína whey isolate de alta biodisponibilidad. La cantidad
+              recomendada para una sesión completa de recuperación, en una sola botella.
+            </p>
+            <div class="card__bar"><i style="--w:88%"></i></div>
+            <span class="card__sublabel">Aporte / porción 500 ml</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 0 azúcar -->
+      <article class="card card--zero" data-bento="zero1">
+        <div class="card__shell">
+          <div class="card__core">
+            <span class="card__tag">Sin endulzantes ocultos</span>
+            <div class="card__zero">0<i>g</i></div>
+            <p class="card__title">azúcar añadida</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- 0 lactosa -->
+      <article class="card card--zero" data-bento="zero2">
+        <div class="card__shell">
+          <div class="card__core">
+            <span class="card__tag">Digestión ligera</span>
+            <div class="card__zero">0<i>%</i></div>
+            <p class="card__title">lactosa</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- Sin espesantes -->
+      <article class="card card--clear" data-bento="clear">
+        <div class="card__shell">
+          <div class="card__core card__core--split">
+            <div class="card__copy">
+              <span class="card__tag">Clean label</span>
+              <h3 class="card__h">Cristalina por dentro y por fuera.</h3>
+              <p class="card__text">
+                Sin gomas, sin espesantes, sin colorantes artificiales.
+                Ingredientes que reconoces: agua, proteína, sabor natural.
+              </p>
+              <ul class="card__list">
+                <li>· Sin gomas</li>
+                <li>· Sin espesantes</li>
+                <li>· Sin colorantes artificiales</li>
+                <li>· Sin grasas añadidas</li>
+              </ul>
+            </div>
+            <figure class="card__media">
+              <img src="./assets/img/lifestyle/bottle-hands.png" alt="Botella H2PRO sostenida en mano mostrando el sello de 20g de proteína" loading="lazy" />
+              <figcaption>20 g · listo para tomar</figcaption>
+            </figure>
+          </div>
+        </div>
+      </article>
+
+      <!-- 80 kcal -->
+      <article class="card card--mini" data-bento="mini1">
+        <div class="card__shell">
+          <div class="card__core">
+            <span class="card__num-mini">80</span>
+            <span class="card__lbl-mini">kcal por botella</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 500 ml -->
+      <article class="card card--mini" data-bento="mini2">
+        <div class="card__shell">
+          <div class="card__core">
+            <span class="card__num-mini">500</span>
+            <span class="card__lbl-mini">ml lista para tomar</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============== SABORES ============== -->
+<section class="flavors" id="sabores">
+  <div class="container">
+    <header class="section-head section-head--center">
+      <span class="eyebrow eyebrow--dark" data-reveal>
+        <span class="eyebrow__dot"></span>
+        03 — Sabores
+      </span>
+      <h2 class="section-title section-title--center" data-split-text>
+        Dos sabores. Una sola <span class="section-title__ital">claridad</span>.
+      </h2>
+    </header>
+
+    <div class="flavors__switch-wrap">
+      <span class="flavors__hint" aria-hidden="true">
+        <span class="flavors__hint-line"></span>
+        Toca para cambiar
+        <span class="flavors__hint-line"></span>
+      </span>
+      <div class="flavors__switch" role="tablist">
+        <button class="flavor-tab is-active" data-flavor="blueberry" role="tab" aria-selected="true">
+          <span class="flavor-tab__dot" style="--c:#0086D6"></span>
+          Blueberry
+        </button>
+        <button class="flavor-tab" data-flavor="limonada" role="tab" aria-selected="false">
+          <span class="flavor-tab__dot" style="--c:#E8C547"></span>
+          Limonada
+        </button>
+      </div>
+    </div>
+
+    <div class="flavors__stage">
+      <!-- Blueberry panel -->
+      <article class="flavor is-active" data-panel="blueberry">
+        <div class="flavor__copy">
+          <h3 class="flavor__name">Blueberry</h3>
+          <p class="flavor__desc">
+            Notas dulces y profundas de mora azul natural sobre un cuerpo de agua mineral
+            ultra clara. Fresca, ligera, con un final limpio.
+          </p>
+          <div class="flavor__specs">
+            <div><span>Tono</span><b>Azul cielo translúcido</b></div>
+            <div><span>Perfil</span><b>Dulce · floral · fresco</b></div>
+            <div><span>Ideal</span><b>Mañana · post-entreno</b></div>
+          </div>
+          <div class="flavor__ingredients">
+            <span class="eyebrow eyebrow--small">Ingredientes</span>
+            <p>Agua, proteína aislada de suero de leche, saborizante idéntico al natural, color natural, sucralosa.</p>
+          </div>
+        </div>
+        <div class="flavor__visual" data-flavor-visual>
+          <div class="flavor__halo flavor__halo--blue"></div>
+          <div class="flavor__ring flavor__ring--blue" aria-hidden="true"></div>
+          <img class="flavor__bottle" src="./assets/img/bottle-blueberry.png" alt="H2PRO Blueberry" />
+          <video class="flavor__video" data-video="blueberry" muted playsinline loop preload="metadata" aria-hidden="true">
+            <source src="./assets/video/blueberry-360.mp4" type="video/mp4" />
+          </video>
+          <span class="flavor__hint" aria-hidden="true">
+            <span>Hover</span><em>↻</em><span>360°</span>
+          </span>
+        </div>
+      </article>
+
+      <!-- Limonada panel -->
+      <article class="flavor" data-panel="limonada">
+        <div class="flavor__copy">
+          <h3 class="flavor__name">Limonada</h3>
+          <p class="flavor__desc">
+            Cítrico vivo, ligeramente ácido, con la frescura de una limonada hecha
+            en casa. La elección clásica para todos los días.
+          </p>
+          <div class="flavor__specs">
+            <div><span>Tono</span><b>Crema cítrica translúcida</b></div>
+            <div><span>Perfil</span><b>Cítrico · fresco · brillante</b></div>
+            <div><span>Ideal</span><b>Tarde · oficina · viaje</b></div>
+          </div>
+          <div class="flavor__ingredients">
+            <span class="eyebrow eyebrow--small">Ingredientes</span>
+            <p>Agua, proteína aislada de suero de leche, saborizante idéntico al natural, color natural, sucralosa.</p>
+          </div>
+        </div>
+        <div class="flavor__visual" data-flavor-visual>
+          <div class="flavor__halo flavor__halo--lemon"></div>
+          <div class="flavor__ring flavor__ring--lemon" aria-hidden="true"></div>
+          <img class="flavor__bottle" src="./assets/img/bottle-limonada.png" alt="H2PRO Limonada" />
+          <video class="flavor__video" data-video="limonada" muted playsinline loop preload="metadata" aria-hidden="true">
+            <source src="./assets/video/limonada-360.mp4" type="video/mp4" />
+          </video>
+          <span class="flavor__hint" aria-hidden="true">
+            <span>Hover</span><em>↻</em><span>360°</span>
+          </span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============== NUTRICIÓN ============== -->
+<section class="nutrition" id="nutricion">
+  <div class="container">
+    <header class="section-head">
+      <span class="eyebrow eyebrow--dark" data-reveal>
+        <span class="eyebrow__dot"></span>
+        04 — Declaración nutrimental
+      </span>
+      <h2 class="section-title" data-split-text>
+        Todo lo que entra está en la <span class="section-title__ital">etiqueta</span>.
+      </h2>
+    </header>
+
+    <div class="spec">
+      <div class="spec__head">
+        <div><span>Tamaño porción</span><b>500 ml</b></div>
+        <div><span>Energía / botella</span><b>80 kcal · 334.9 kJ</b></div>
+        <div><span>Vida de anaquel</span><b>18 meses</b></div>
+      </div>
+
+      <table class="spec__table">
+        <thead>
+          <tr><th>Por porción de</th><th>100 ml</th><th>500 ml</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Contenido energético</td><td>16 kcal</td><td>80 kcal</td></tr>
+          <tr><td>Proteínas</td><td>4 g</td><td><b>20 g</b></td></tr>
+          <tr><td>Grasas</td><td>0 g</td><td>0 g</td></tr>
+          <tr><td>Carbohidratos</td><td>0 g</td><td>0 g</td></tr>
+          <tr><td>Sodio</td><td>7.6 mg</td><td>38 mg</td></tr>
+        </tbody>
+      </table>
+
+      <div class="spec__foot">
+        <p><b>Ingredientes:</b> Agua, proteína aislada de suero de leche, saborizante idéntico al natural, color natural, sucralosa.</p>
+        <p class="spec__small">Tomar una botella (500 ml) al día. Almacenar en lugar fresco, seco y alejado de luz solar directa. Una vez abierto consérvese en refrigeración.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== AUDIENCE ============== -->
+<section class="audience">
+  <div class="container">
+    <header class="section-head">
+      <span class="eyebrow eyebrow--dark" data-reveal>
+        <span class="eyebrow__dot"></span>
+        05 — Para quién es H2PRO
+      </span>
+      <h2 class="section-title" data-split-text>
+        Proteína para todos los días, <span class="section-title__ital">no solo post-gym</span>.
+      </h2>
+    </header>
+
+    <div class="personas">
+      <article class="persona" data-reveal>
+        <figure class="persona__photo">
+          <img src="./assets/img/lifestyle/persona-office.png" alt="Juan Pablo, financiero, en su escritorio con una H2PRO" loading="lazy" />
+          <figcaption>Lunes · 11:42</figcaption>
+        </figure>
+        <div class="persona__body">
+          <span class="persona__num">01</span>
+          <h3 class="persona__name">Juan Pablo<i>·</i><span>28</span></h3>
+          <p class="persona__role">Financiero · oficina + correr</p>
+          <p class="persona__quote">
+            “Necesito algo práctico y ligero que cuide mi salud sin interrumpir mi rutina.”
+          </p>
+          <ul class="persona__tags">
+            <li>oficina</li><li>5K</li><li>2x gym</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="persona" data-reveal>
+        <figure class="persona__photo">
+          <img src="./assets/img/lifestyle/persona-gym.png" alt="Carlos en el gym bebiendo H2PRO post-entreno" loading="lazy" />
+          <figcaption>Miércoles · 19:08</figcaption>
+        </figure>
+        <div class="persona__body">
+          <span class="persona__num">02</span>
+          <h3 class="persona__name">Carlos<i>·</i><span>30</span></h3>
+          <p class="persona__role">Ingeniero · crossfit + bici</p>
+          <p class="persona__quote">
+            “Quiero proteína efectiva para recuperarme después del entreno, pero ligera y limpia.”
+          </p>
+          <ul class="persona__tags">
+            <li>crossfit</li><li>5x semana</li><li>recovery</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="persona" data-reveal>
+        <figure class="persona__photo">
+          <img src="./assets/img/lifestyle/persona-wellness.png" alt="Ana Sofía con su mat de yoga y una H2PRO" loading="lazy" />
+          <figcaption>Sábado · 08:30</figcaption>
+        </figure>
+        <div class="persona__body">
+          <span class="persona__num">03</span>
+          <h3 class="persona__name">Ana Sofía<i>·</i><span>34</span></h3>
+          <p class="persona__role">Emprendedora · pilates + hiking</p>
+          <p class="persona__quote">
+            “Prefiero pagar más por algo natural y honesto que me cuide por dentro y me haga sentir ligera.”
+          </p>
+          <ul class="persona__tags">
+            <li>wellness</li><li>clean label</li><li>digestión</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============== CTA ============== -->
+<section class="cta" id="contacto">
+  <div class="container">
+    <div class="cta__shell">
+      <div class="cta__core">
+        <span class="eyebrow eyebrow--invert" data-reveal>
+          <span class="eyebrow__dot"></span>
+          ¿Listo para fluir?
+        </span>
+        <h2 class="cta__title" data-split-text>
+          Pide tu muestra<br/>
+          de <span class="cta__ital">H2PRO</span>.
+        </h2>
+        <p class="cta__sub">
+          Distribuidores, gimnasios, oficinas y retailers. Si quieres probarla
+          o llevarla a tu negocio, escríbenos.
+        </p>
+        <div class="cta__actions">
+          <a class="btn btn--solid btn--lg" href="mailto:diego@h2pro.fit">
+            <span>diego@h2pro.fit</span>
+            <span class="btn__icon" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+            </span>
+          </a>
+          <a class="btn btn--ghost btn--lg btn--invert" href="tel:+523331470485">
+            <span>+52 33 3147 0485</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <img class="footer__logo" src="./assets/logo/h2pro-logo.svg" alt="H2PRO" />
+        <p class="footer__lede">
+          Agua con proteína. <em>Hecha en México.</em><br/>
+          Sin azúcar, sin lactosa, sin trucos.
+        </p>
+        <ul class="footer__contact">
+          <li><span>Comercial</span><a href="mailto:diego@h2pro.fit">diego@h2pro.fit</a></li>
+          <li><span>Teléfono</span><a href="tel:+523331470485">+52 33 3147 0485</a></li>
+          <li><span>Origen</span><b>Guadalajara · MX</b></li>
+        </ul>
+      </div>
+      <div class="footer__cols">
+        <div class="footer__col">
+          <span>Producto</span>
+          <a href="#sabores">Blueberry</a>
+          <a href="#sabores">Limonada</a>
+          <a href="#nutricion">Nutrición</a>
+        </div>
+        <div class="footer__col">
+          <span>Marca</span>
+          <a href="#manifiesto">Manifiesto</a>
+          <a href="#beneficios">Beneficios</a>
+          <a href="#contacto">Contacto</a>
+        </div>
+        <div class="footer__col">
+          <span>Síguenos</span>
+          <a href="https://instagram.com/h2pro.fit" target="_blank" rel="noopener">@h2pro.fit ↗</a>
+          <a href="https://www.h2pro.fit" target="_blank" rel="noopener">h2pro.fit ↗</a>
+          <a href="mailto:diego@h2pro.fit">diego@h2pro.fit</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer__big" aria-hidden="true">H2PRO</div>
+
+    <div class="footer__bottom">
+      <span>© <span id="year"></span> H2PRO® · Clear Protein · Hecho en México</span>
+      <span>Producto registrado · 20 años de experiencia en suplementos naturistas</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="./js/main.js?v=7" defer></script>
+</body>
+</html>
